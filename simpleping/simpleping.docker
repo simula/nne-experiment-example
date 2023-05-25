@@ -1,0 +1,16 @@
+FROM foivosm/base:core
+
+MAINTAINER michelinakis.foivos@gmail.com
+
+RUN apt-get update && apt-get install -y --force-yes \
+        iputils-ping \
+	&& apt-get clean -y --force-yes clean \
+        && apt-get -y --force-yes autoremove \
+        # Cleanup
+        && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cache/* /var/tmp/* /usr/share/doc /usr/share/man /usr/share/locale /var/cache/debconf/*-old
+
+RUN mkdir -p /opt/simpleping
+COPY files/* /opt/simpleping/
+
+
+ENTRYPOINT ["dumb-init", "--", "/usr/bin/python3", "/opt/simpleping/main.py"]
