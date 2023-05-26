@@ -25,8 +25,8 @@ if os.path.isdir("/monroe"):
 else:
     # testing instance
     print("testing")
-    CONFIG_FILE = '../../supportingFiles/config'
-    RESULTS_DIR = '../../supportingFiles/testingResults/'
+    CONFIG_FILE = '../../localTesting/config'
+    RESULTS_DIR = '../../localTesting/testingResults/'
     CURRENT_DIR = './'
     typeOfNode = "testing"
 # else:
