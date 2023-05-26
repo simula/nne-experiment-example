@@ -24,7 +24,7 @@ if os.path.isdir("/monroe"):
 # elif (os.uname().nodename in ["ubuntu", 'foivosLaptop.local', 'dominos']):
 else:
     # testing instance
-    print("testing")
+    print("testing instance")
     CONFIG_FILE = '../../localTesting/config'
     RESULTS_DIR = '../../localTesting/testingResults/'
     CURRENT_DIR = './'

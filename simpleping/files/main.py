@@ -48,8 +48,11 @@ numberOfPings = configurationParameters.get("numberOfPings", DEFAULTCONFIGURATIO
 
 if typeOfNode == "Monroe":
     operatorContextDict = mapMobileOperatorsToInterfacesAndSourceIPs(operatorList)
-else:
+elif typeOfNode == "testing":
     operatorContextDict = getWiredInterfaceSourceIP("eno1")
+else:
+    print("Unknown type of node. Exiting....")
+    sys.exit(1)
 
 for operatorName, operatorContext in operatorContextDict.items():
     print(operatorName)
