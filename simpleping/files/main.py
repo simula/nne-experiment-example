@@ -11,9 +11,7 @@ import subprocess
 import time
 
 
-
-RESULTS_DIR = "/monroe/results/"
-OUTPUTFILEDIR = "/opt/simpleping/"
+OUTPUTFILEDIR = "./"
 DEFAULTCONFIGURATIONPARAMETERS = {"targets": ["www.google.com"], "numberOfPings": 10, "Operator": ["Telenor", "Telia"]}
 REVERTTODEFAULT = True # True: if the configuration file is unreadable run the experiment with the default parameters. False: there is not point to run the experiment if we can not test our specified parameters, so we abort.
 
@@ -48,7 +46,10 @@ operatorList = configurationParameters.get("Operator", DEFAULTCONFIGURATIONPARAM
 targets = configurationParameters.get("targets", DEFAULTCONFIGURATIONPARAMETERS["targets"])
 numberOfPings = configurationParameters.get("numberOfPings", DEFAULTCONFIGURATIONPARAMETERS["numberOfPings"])
 
-operatorContextDict = mapMobileOperatorsToInterfacesAndSourceIPs(operatorList)
+if typeOfNode == "Monroe":
+    operatorContextDict = mapMobileOperatorsToInterfacesAndSourceIPs(operatorList)
+else:
+    operatorContextDict = getWiredInterfaceSourceIP("eno1")
 
 for operatorName, operatorContext in operatorContextDict.items():
     print(operatorName)
@@ -66,4 +67,4 @@ for operatorName, operatorContext in operatorContextDict.items():
 
 # we add a bit of time at the end to make sure the results are copied before
 # the container instance exits.
-time.sleep(10)
+time.sleep(3)
