@@ -5,5 +5,5 @@ CONTAINER=${DIR##*/}
 DOCKERFILE=${CONTAINER}.docker
 
 find . -name "*.pyc" -delete
-docker pull foivosm/base:core
+docker pull crnaeng/base:core
 docker build --rm=true -f ${DOCKERFILE} -t ${CONTAINER} . && echo "Finished building ${CONTAINER}"

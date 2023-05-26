@@ -2,7 +2,7 @@
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 CONTAINER="basic_tests "
-CONTAINERTAG="foivosm/basic_tests "
+CONTAINERTAG="crnaeng/simpleping"
 
 TESTNAME="basic_tests"
 WORKDIR="/run/shm/${TESTNAME}"
