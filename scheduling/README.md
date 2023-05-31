@@ -238,74 +238,88 @@ TBA
 
 This is a python script that automates everything discussed above.
 
-Before using it put your own parameters (i.e. the variables defined after the imports). The parameters needed are:
+Create your own instance of the `scheduler` object with the following parameters:
 
-* `resultsDir`: Directory where we save the results of the experiments
-* `supportDir`: Directory with the key and certificate files to access `pioneer.nntb.no` and a place to store intermediate scheduling files.
-* `resultsServerKey`: The private key to access `pioneer.nntb.no`
+* `pioneerKeyPath`: Path of the private key to log in to `pioneer` for retrieving the results.
+* `pioneerUser`: The user name of the linux account in `pioneer`.
 * `userId`: Your user ID. You can see it at the top of the `haugerud.nntb.no` website if you visit it with a browser.
-* `MonroeSystemsIp`: The IP of the `haugerud.nntb.no` server.
+* `pendingFilesClientDir`: Directory where we save the results of the experiments.
+* `processedFilesClientDir`: After we process the raw files in `pendingFilesClientDir`, we move them here.
+* `supportDir`: Directory where we store the intermediate scheduling files.
+* `PemKeyDir`: Path to the key file of the scheduler.
+* `PemCerDir`: Path to the certificate file of the scheduler.
 
 ### Example usage of `scheduler.py` inside a jupyter notebook cell
 
 ```python
-from scheduler import * # have the scheduler.py either in your PATH or in the same directory as your code.
+from scheduler import *
 
-# get all the experimetnts of a user scheduled after a date.
-userId = 106
-starDate = "2021-03-24 00:00:00"
+s = scheduler(
+            pioneerKeyPath = '/home/foivos/.ssh/monroeResults', # <-- change this to point to your own pioneer key
+            pioneerUser = 'foivos',  # <-- change this to point to your own pioneer user
+            userId = 245, # <-- change this to your own user ID
+            pendingFilesClientDir = "../pendingFilesClient/", # directory where we save the results of the experiments
+            processedFilesClientDir = "../processedFilesClient/",
+            supportDir = './', # directory where we store the intermediate scheduling files.
+            PemKeyDir = '/home/foivos/foivos.key.pem', # pem key directory
+            PemCerDir = '/home/foivos/foivos.crt.pem' # pem certificate directory
+            )
 
-test = getUserExperimentsDate(userId, starDate)
-expIds = getExperimentIds(test)
-epxerimentElements = getSpecificExperimentElement(expIds)
+# Retrieve a list of the scheduled experiments (past and future) and download related results of a user scheduled after a date.
+startDate = "2021-03-24 00:00:00"
+
+scheduledExepriments = s.getUserExperimentsDate(startDate)
+expIds = getExperimentIds(scheduledExepriments)
+epxerimentElements = s.getSpecificExperimentElements(expIds)
 for experiment, elementList in epxerimentElements.items():
     for element in elementList:
         print(element)
+        try:
+            s.downloadExperimentalElementResults(element)
+        except:
+            print("Not able to download")
+            continue
 
 #download experiments
-downloadExperimentalElementResults(1995072)
+s.downloadExperimentalElementResults(2985817)
 
-# submit an experiment
-nodeId = 2561
-start = 1616582750
-duration = 650
+# submit experiment to a list of nodes
+# check in scheduler.py for predifined node lists.
+nodeList = [4125]
+# nodeList = new_5G_nodes
+
+# start at a specific UTC time
+# start = getTimestamp('2021-04-08 23:00:00')
+# alternatively start 10 minutes from now
+# you need to schedule experiments at least 5 minutes from now to allow the scheduler to
+# communicate them to the nodes in time.
+start = int(time.time() + 600)
+
+duration = 600
 nodecount = 1
-experimentName = "test cli scheduling"
-script = "docker.io/foivosm/basic_tests"
-options = {
-    "iperf3_udp": {
-        "performTest": "yes",
-        "iperfBinary": "37",
-        "serverIP": "128.39.37.74",
-        "serverPort": "60000",
-        "useTcpdump": "no",
-        "targetBitrate": "600M",
-        "transmissionTime": "3"
-    },
-    "cubic": {
-        "performTest": "no",
-        "serverIP": "128.39.37.74",
-        "serverPort": "54541",
-        "useTcpdump": "yes",
-        "targetFile": "1M",
-        "captureLength": "74"
-    },
-    "bbr": {
-        "performTest": "no",
-        "serverIP": "128.39.37.74",
-        "serverPort": "54541",
-        "useTcpdump": "yes",
-        "targetFile": "1M",
-        "captureLength": "74"
-    },
-    "interfaces_placeholder": ["eth0"],
-    "configurationSource": "configFile",
-    "trace_ping_target": "128.39.37.74",
-    "traceroute": "no",
-    "ping": "no"
-}
+experimentName = "jitter programmatically on operator"
+containerURL = "docker.io/crnaeng/simpleping"
+optionsList = [    
+    {
+        "targets": ["www.vg.no"],
+         "numberOfPings": 5,
+         "Operator": ["Telenor", "Telia"]
+    }
+]
 
-submitExperiment(nodeId, start, duration, nodecount, experimentName, script, options)
+# j: how many times to run an experiment per nonde
+# i: some time spacing between nodes to make sure that they do not send requests to the same servers at the same time
+# x: The different configurations, such as operators / interfaces
+for j in range(1):
+    for i in range(len(nodeList)):
+        for x in range(len(optionsList)):
+            initiallyRequestedStartTime = start + (3600 * j) + (i * 300) + (600 * x)
+            nodeAvailability = s.checkAvailability(nodeList[i], initiallyRequestedStartTime, duration, nodecount)
+            nonConflictingStartTime = nodeAvailability[0]["start"]
+            print(f"Initially requested start time: UTC timestamp {initiallyRequestedStartTime}, UTC human readable: {humanDate(initiallyRequestedStartTime)}")
+            print(f"nonConflictingStartTime: {nonConflictingStartTime}, UTC human readable: {humanDate(nonConflictingStartTime)}")
+            s.submitExperiment(nodeList[i], nonConflictingStartTime, duration, nodecount, f"{experimentName} {optionsList[x]['operator']} and node {str(nodeList[i])}", containerURL, optionsList[x])
+
 
 
 ```
