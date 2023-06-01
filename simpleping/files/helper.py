@@ -118,14 +118,12 @@ def mapMobileOperatorsToInterfacesAndSourceIPs(targetOperatorList, timeout = 10)
         if ((int(time.time()) - startFunctionTime) > timeout) or (None not in [operatorDict[key]["interface"] for key in operatorDict.keys()]):
             return operatorDict
 
-
 def saveResultFromString(stringToSave, filename):
     with open(CURRENT_DIR + filename, "w") as outputFile:
         outputFile.write(stringToSave)
     shutil.copy2(CURRENT_DIR + filename, RESULTS_DIR + filename + ".tmp")
     shutil.move(RESULTS_DIR + filename + ".tmp", RESULTS_DIR + filename)
     os.remove(CURRENT_DIR + filename)
-
 
 def saveResultFromFile(filename):
     shutil.copy2(CURRENT_DIR + filename, RESULTS_DIR + filename + ".tmp")

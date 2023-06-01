@@ -12,7 +12,9 @@ The MONROE manual is at the following [github repository](https://github.com/MON
     2. Pass the parameters of the configuration files in `prepare` section of the script in the line that reads something like `echo '{"measurement_id": 99999}' > $WORKDIR/config`. Make sure the `measurement_id` is not conflicting with an existing `measurement_id`. So, put a very high number there.
     3. (optional) `CONTAINER`: just put the name of the container.
     4. (optional) `TESTNAME`: add here a name that is not conflicting with an existing `TESTNAME` at the node.
-3. run the `runOnNode.sh`. You will end up inside the container.
+3. run the `runOnNode.sh`. It will launch the container and it will
+automatically start a shell inside the container.
+So, at the end of the scirpt you will end up inside the container.
 
 ### Example configuration files
 
