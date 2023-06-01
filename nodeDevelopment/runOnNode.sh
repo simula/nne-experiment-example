@@ -1,17 +1,17 @@
 #!/bin/bash -e
 
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
-CONTAINER="basic_tests "
+CONTAINER="simpleping"
 CONTAINERTAG="crnaeng/simpleping"
 
-TESTNAME="basic_tests"
+TESTNAME="simpleping"
 WORKDIR="/run/shm/${TESTNAME}"
 
 
 echo "Prepare:"
 rm -rf $WORKDIR
 mkdir -p $WORKDIR
-echo '{"measurement_id": 99999}' > $WORKDIR/config
+echo ' {"targets": ["www.vg.no"],"numberOfPings": 5,"Operator": ["Telenor", "Telia"], "measurement_id": 99999}' > $WORKDIR/config
 mkdir -p $WORKDIR/results
 
 
