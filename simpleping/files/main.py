@@ -12,15 +12,15 @@ import time
 
 logstring = ""
 
-logstring += str("start of experiment\n")
-logstring += str(f"Starting at {time.time()}\n")
+logstring += "start of experiment\n"
+logstring += f"Starting at {time.time()}\n"
 
 OUTPUTFILEDIR = "./"
 DEFAULTCONFIGURATIONPARAMETERS = {"targets": ["www.google.com"], "numberOfPings": 3, "Operator": ["Telenor", "Telia"]}
 REVERTTODEFAULT = True # True: if the configuration file is unreadable run the experiment with the default parameters. False: there is not point to run the experiment if we can not test our specified parameters, so we abort.
 
 
-logstring += str("reading the configuration file\n")
+logstring += "reading the configuration file\n"
 # ====== Read the configuration file - START ==================================
 try:
     with open(CONFIG_FILE, "r") as fd:
@@ -30,35 +30,35 @@ try:
         saveResultFromString("False", "usingDefaults.txt")
     saveResultFromFileGenericPath(CONFIG_FILE) # just to have the exact experiment configuration of this isntance alongside its results
     if os.path.isfile("/nodeid"):
-        logstring += str("The nodeID file exists.\n")
+        logstring += "The nodeID file exists.\n"
         saveResultFromFileGenericPath("/nodeid")
     else:
-        logstring += str("The nodeID file is missing.")
+        logstring += "The nodeID file is missing."
         saveResultFromString("00000", "nodeid")
-    logstring += str("The configuration file was successully parsed.")
+    logstring += "The configuration file was successully parsed."
 except Exception as e:
-    logstring += str("Cannot retrive /monroe/config {}".format(e))
+    logstring += f"Cannot retrive /monroe/config {e}"
     if REVERTTODEFAULT:
-        logstring += str("Using default parameters.......")
+        logstring += "Using default parameters......."
         configurationParameters = DEFAULTCONFIGURATIONPARAMETERS
         usingDefaults = True
         saveResultFromString("True", "usingDefaults.txt")
     else:
-        logstring += str("we abort this experimnt.......")
+        logstring += "we abort this experimnt......."
         sys.exit(1)
 # ====== Read the configuration file - STOP ==================================
 
 # we use the `get` method, to assign values, so that in case a value is missing
 # from the configurtion file, we can use its default value.
-logstring += str("The initial configurationParameters are:\n")
+logstring += "The initial configurationParameters are:\n"
 logstring += str(configurationParameters) + "\n"
 operatorList = configurationParameters.get("Operator", DEFAULTCONFIGURATIONPARAMETERS["Operator"])
 targets = configurationParameters.get("targets", DEFAULTCONFIGURATIONPARAMETERS["targets"])
 numberOfPings = configurationParameters.get("numberOfPings", DEFAULTCONFIGURATIONPARAMETERS["numberOfPings"])
 
-logstring += str(f"the operatorList is {operatorList}\n")
-logstring += str(f"the targets is {targets}\n")
-logstring += str(f"the numberOfPings is {numberOfPings}\n")
+logstring += f"the operatorList is {operatorList}\n"
+logstring += f"the targets is {targets}\n"
+logstring += f"the numberOfPings is {numberOfPings}\n"
 
 
 if typeOfNode == "Monroe":
@@ -66,7 +66,7 @@ if typeOfNode == "Monroe":
 elif typeOfNode == "testing":
     operatorContextDict = getWiredInterfaceSourceIP("eno1")
 else:
-    logstring += str("Unknown type of node. Exiting....\n")
+    logstring += "Unknown type of node. Exiting....\n"
     sys.exit(1)
 
 for operatorName, operatorContext in operatorContextDict.items():
@@ -76,14 +76,14 @@ for operatorName, operatorContext in operatorContextDict.items():
     if targetInterface != None:
         for target in targets:
             cmd = ["ping", "-I", targetInterface, "-c", str(numberOfPings), target]
-            logstring += str(" ".join(cmd)) + "\n"
+            logstring += " ".join(cmd) + "\n"
             output = subprocess.check_output(cmd).decode('ascii')
             OUTPUTFILE = f"{OUTPUTFILEDIR}_{operatorName}_{target}.txt"
             with open(OUTPUTFILE, 'w') as resultsTxt:
                 resultsTxt.write(output)
             saveResultFromFile(OUTPUTFILE)
 
-logstring += str(f"Finished at {time.time()}\n")
+logstring += f"Finished at {time.time()}\n"
 
 saveResultFromString(logstring, "logstring.txt")
 
