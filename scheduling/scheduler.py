@@ -272,6 +272,7 @@ class scheduler:
         return response
 
     def getUserExperimentsDate(self, startDate):
+        # The URL to see the same information in the browser is https://haugerud.nntb.no/StatusExperiment.html
         #url = 'https://haugerud.nntb.no/v1/users/' + str(self.userId) + "/experiments/"
         url = 'https://' + self.MonroeSystemsIp + '/v1/users/' + str(self.userId) + "/experiments/"
         print(url)

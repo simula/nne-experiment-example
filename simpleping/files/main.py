@@ -43,8 +43,11 @@ except Exception as e:
         configurationParameters = DEFAULTCONFIGURATIONPARAMETERS
         usingDefaults = True
         saveResultFromString("True", "usingDefaults.txt")
+        # also copy the default parameters to the results.
+        saveResultFromString(str(DEFAULTCONFIGURATIONPARAMETERS), "config")
     else:
         logstring += "we abort this experimnt......."
+        time.sleep(5)
         sys.exit(1)
 # ====== Read the configuration file - STOP ==================================
 
@@ -67,6 +70,7 @@ elif typeOfNode == "testing":
     operatorContextDict = getWiredInterfaceSourceIP("eno1")
 else:
     logstring += "Unknown type of node. Exiting....\n"
+    saveResultFromString(logstring, "logstring.txt")
     sys.exit(1)
 
 for operatorName, operatorContext in operatorContextDict.items():
@@ -89,4 +93,5 @@ saveResultFromString(logstring, "logstring.txt")
 
 # we add a bit of time at the end to make sure the results are copied before
 # the container instance exits.
+# typically 10 seconds are enough.
 time.sleep(3000)
