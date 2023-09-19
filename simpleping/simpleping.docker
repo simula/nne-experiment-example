@@ -2,10 +2,10 @@ FROM crnaeng/base:core
 
 MAINTAINER foivos@simula.no
 
-RUN apt-get update && apt-get install -y --force-yes \
+RUN apt-get update && apt-get install -y --allow-change-held-packages --allow-remove-essential \
         iputils-ping \
-	&& apt-get clean -y --force-yes clean \
-        && apt-get -y --force-yes autoremove \
+	&& apt-get clean -y --allow-change-held-packages --allow-remove-essential clean \
+        && apt-get -y --allow-change-held-packages --allow-remove-essential autoremove \
         # Cleanup
         && rm -rf /var/lib/apt/lists/* /tmp/* /root/.cache/* /var/tmp/* /usr/share/doc /usr/share/man /usr/share/locale /var/cache/debconf/*-old
 
