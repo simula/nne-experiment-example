@@ -15,4 +15,4 @@ COPY files/* /opt/simpleping/
 
 # ENTRYPOINT ["dumb-init", "--", "/usr/bin/python3", "/opt/simpleping/main.py"]
 # In case you want to do a live debug use the live_editing.sh to launch a container without running the target script on its own
-ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/opt/basic_tests/live_editing.sh"]
+ENTRYPOINT ["dumb-init", "--", "/bin/bash", "/opt/simpleping/live_editing.sh"]
