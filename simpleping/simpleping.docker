@@ -1,6 +1,6 @@
 FROM crnaeng/base:core
 
-MAINTAINER foivos@simula.no
+LABEL org.opencontainers.image.authors="foivos@simula.no"
 
 RUN apt-get update && apt-get install -y --allow-change-held-packages --allow-remove-essential \
         iputils-ping \
